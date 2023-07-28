@@ -7,6 +7,12 @@ import (
 
 func main() {
 	http.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w,"Hello, World");
+		n,err := fmt.Fprintf(w,"Hello, World");
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(fmt.Sprintf("Number of bytes written:%d",n))
 	})
+
+	http.ListenAndServe(":3080",nil)
 }
