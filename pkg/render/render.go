@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"myapp/pkg/config"
+	"myapp/pkg/handlers"
 	"net/http"
 	"path/filepath"
 )
@@ -15,7 +16,7 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(res http.ResponseWriter, templ string) {
+func RenderTemplate(res http.ResponseWriter, templ string, td *handlers.TemplateData) {
 	var caches map[string]*template.Template
 	if app.UseCache {
 		caches = app.TemplateCache
