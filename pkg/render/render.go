@@ -4,30 +4,39 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"myapp/pkg/config"
 	"net/http"
 	"path/filepath"
 )
 
+var app *config.AppConfig
+
+func NewTemplate(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(res http.ResponseWriter, templ string) {
-	//Create template caches
-	caches, err := createTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+	var caches map[string]*template.Template
+	if app.UseCache {
+		caches = app.TemplateCache
+	} else {
+		caches, _ = CreateTemplateCache()
 	}
+
 	//getRequested template cache from caches
 	cache, ok := caches[templ]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from caches")
 	}
 
-	err = cache.Execute(res, nil)
+	err := cache.Execute(res, nil)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
 		return
 	}
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("../../templates/*.html")
 	if err != nil {
