@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"log"
 	"myapp/pkg/config"
-	"myapp/pkg/handlers"
+	"myapp/pkg/models"
 	"net/http"
 	"path/filepath"
 )
@@ -16,7 +16,12 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(res http.ResponseWriter, templ string, td *handlers.TemplateData) {
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+
+	return td
+}
+
+func RenderTemplate(res http.ResponseWriter, templ string, td *models.TemplateData) {
 	var caches map[string]*template.Template
 	if app.UseCache {
 		caches = app.TemplateCache
@@ -29,8 +34,8 @@ func RenderTemplate(res http.ResponseWriter, templ string, td *handlers.Template
 	if !ok {
 		log.Fatal("Could not get template from caches")
 	}
-
-	err := cache.Execute(res, nil)
+	td = AddDefaultData(td)
+	err := cache.Execute(res, td)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
 		return

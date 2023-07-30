@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"myapp/pkg/config"
+	"myapp/pkg/models"
 	"myapp/pkg/render"
 	"net/http"
 )
@@ -34,5 +35,5 @@ func (m *Repository) Home(res http.ResponseWriter, req *http.Request) {
 
 // About page handler
 func (m *Repository) About(res http.ResponseWriter, req *http.Request) {
-	render.RenderTemplate(res, "about.html", &TemplateData{})
+	render.RenderTemplate(res, "about.html", &models.TemplateData{})
 }
