@@ -7,19 +7,32 @@ import (
 	"myapp/pkg/handlers"
 	"myapp/pkg/render"
 	"net/http"
+	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 const portNumber = ":3080"
 
-func main() {
-	var app config.AppConfig
+var app config.AppConfig
+var session *scs.SessionManager
 
+func main() {
+	//Change to true in production
+	app.InProduction = false
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction
+	app.Session = session
 	template, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot create template cache")
 	}
 	app.TemplateCache = template
 	app.UseCache = false
+	//Passed app config to handlers package
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
 

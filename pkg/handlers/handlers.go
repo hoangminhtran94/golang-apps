@@ -26,6 +26,8 @@ func NewHandlers(r *Repository) {
 	Repo = r
 }
 func (m *Repository) Home(res http.ResponseWriter, req *http.Request) {
+	remoteId := req.RemoteAddr
+	m.App.Session.Put(req.Context(), "remote_ip", remoteId)
 	stringMap := make(map[string]string)
 	stringMap["test"] = "Hello, again."
 	render.RenderTemplate(res, "home.html", &models.TemplateData{
@@ -35,5 +37,8 @@ func (m *Repository) Home(res http.ResponseWriter, req *http.Request) {
 
 // About page handler
 func (m *Repository) About(res http.ResponseWriter, req *http.Request) {
-	render.RenderTemplate(res, "about.html", &models.TemplateData{})
+	remoteIp := m.App.Session.GetString(req.Context(), "remote_ip")
+	stringMap := make(map[string]string)
+	stringMap["remote_ip"] = remoteIp
+	render.RenderTemplate(res, "about.html", &models.TemplateData{StringMap: stringMap})
 }
