@@ -5,12 +5,14 @@ import (
 	"myapp/pkg/handlers"
 	"net/http"
 
-	"github.com/gorilla/pat"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func routes(app *config.AppConfig) http.Handler {
-	router := pat.New()
+	router := chi.NewRouter()
 
+	router.Use(middleware.Recoverer)
 	router.Get("/", handlers.Repo.Home)
 	router.Get("/about", handlers.Repo.About)
 
