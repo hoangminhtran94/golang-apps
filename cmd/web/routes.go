@@ -13,6 +13,8 @@ func routes(app *config.AppConfig) http.Handler {
 	router := chi.NewRouter()
 
 	router.Use(middleware.Recoverer)
+	router.Use(WriteToConsole)
+	router.Use(NoSurf)
 	router.Get("/", handlers.Repo.Home)
 	router.Get("/about", handlers.Repo.About)
 
